@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const { jwt_secret } = require('../config/keys.js')
 
 const UserController = {
+
+    //Endpoint register user
     async register(req, res) {
         try {
             const user = await User.create(req.body);
@@ -13,6 +15,7 @@ const UserController = {
         }
     },
     
+    // Endpoint login user with token
     async login(req, res) {
         try {
             const user = await User.findOne({
@@ -33,6 +36,7 @@ const UserController = {
         
      },
 
+     // Endpoint logout user
      async logout(req, res) {
         try {
             await User.findByIdAndUpdate(req.user._id, {
@@ -48,6 +52,7 @@ const UserController = {
         }  
     },
 
+    // Endpoint get authenticated user
     async getUser(req, res) {
         try {
             const user = {
