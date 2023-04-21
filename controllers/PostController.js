@@ -42,23 +42,21 @@ const PostController = {
             console.error(error);
         } 
     },
-
-     // Find posts by name
-     async getByName(req, res) {
+    // Find a post by title
+    async getByTitle(req, res) {
         try {
-            const name = req.query.name;
-            const posts = await Post.find({ title: { $regex: name, $options: "i" } });
-
-            if (posts.length === 0) {
-                return res.status(404).send({ message: `No posts found with name '${name}'` });
+            const query = req.params.title;
+            const posts = await Post.find({ title: { $regex: query, $options: 'i' } });
+            if (!posts.length) {
+                return res.status(404).send({ message: 'No posts found' });
             }
-
             res.send(posts);
         } catch (error) {
             console.error(error);
-            res.status(500).send({ message: 'There was a problem finding posts by name' });
+            res.status(500).send({ message: 'There was a problem finding the posts' });
         }
-    }
+    },
+   
 };
 
 module.exports = PostController;
