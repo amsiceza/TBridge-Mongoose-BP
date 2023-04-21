@@ -1,15 +1,62 @@
 const User = require("../models/User");
+const jwt = require('jsonwebtoken');
+
+const { jwt_secret } = require('../config/keys.js')
 
 const UserController = {
-    async create(req, res) {
+    async register(req, res) {
         try {
-            const newUser = await User.create(req.body)
-            res.status(201).send(newUser)
+            const user = await User.create(req.body);
+            res.status(201).send({ message: "Usuario registrado con exito", user });
         } catch (error) {
-            console.error(error)
-            res.status(500).send({ message: 'There was a problem creating the user' })
+            console.error(error);
         }
-    }
+    },
+    
+    async login(req, res) {
+        try {
+            const user = await User.findOne({
+                 email: req.body.email,
+            })
+        
+            const token = jwt.sign({ _id: user._id }, jwt_secret);
+        
+            if (user.tokens.length > 4) user.tokens.shift();
+            user.tokens.push(token);
+            await user.save();
+        
+            res.send({ message: 'Bienvenid@ ' + user.name, token });
+        
+        } catch (error) {
+            console.error(error);
+        }
+        
+     },
+
+     async logout(req, res) {
+        try {
+            await User.findByIdAndUpdate(req.user._id, {
+                $pull: { tokens: req.headers.authorization },
+            });
+        
+            res.send({ message: "Desconectado con éxito" });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({
+                message: "Hubo un problema al intentar desconectar al usuario",
+            });
+        }  
+    },
+
+    async getUser(req, res) {
+        try {
+            const user = req.user;
+            res.send(user);
+          } catch (error) {
+            console.error(error);
+            res.status(500).send({ error: 'Ha ocurrido un error al obtener la información del usuario.' });
+          }
+    },
 };
 
 module.exports = UserController;
