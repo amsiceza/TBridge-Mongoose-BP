@@ -39,7 +39,7 @@ const UserController = {
                 $pull: { tokens: req.headers.authorization },
             });
         
-            res.send({ message: "Desconectado con éxito" });
+            res.send({ message: `Desconectado con éxito ${req.user.username}` });
         } catch (error) {
             console.error(error);
             res.status(500).send({
@@ -50,7 +50,11 @@ const UserController = {
 
     async getUser(req, res) {
         try {
-            const user = req.user;
+            const user = {
+                email: req.user.email,
+                username: req.user.username, 
+                password: req.user.password
+            }
             res.send(user);
           } catch (error) {
             console.error(error);
