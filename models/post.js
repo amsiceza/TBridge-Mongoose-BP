@@ -4,9 +4,8 @@ const PostSchema = new mongoose.Schema({
 username: String,
 title: String,
 body: String,
-date: Date
 }, { timestamps: true });
 
-const post = mongoose.model('post', PostSchema);
+const Post = mongoose.model('Post', PostSchema);
 
-module.exports = post;
+module.exports = Post;
