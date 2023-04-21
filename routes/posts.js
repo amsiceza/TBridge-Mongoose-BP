@@ -8,6 +8,7 @@ router.post('/create', authentication, PostController.create)
 router.put("/update/:_id", authentication, isAuthor, PostController.update);
 router.delete("/delete/:_id", authentication, isAuthor, PostController.delete);
 router.get("/getByTitle/:title", authentication, PostController.getByTitle);
+router.get("/getById/:_id", authentication, PostController.getById);
 
 
 
