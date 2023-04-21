@@ -43,11 +43,11 @@ const UserController = {
                 $pull: { tokens: req.headers.authorization },
             });
         
-            res.send({ message: `Desconectado con éxito ${req.user.username}` });
+            res.send({ message: `Logged out successfully ${req.user.username}` });
         } catch (error) {
             console.error(error);
             res.status(500).send({
-                message: "Hubo un problema al intentar desconectar al usuario",
+                message: "There was a problem trying to log out the user",
             });
         }  
     },
@@ -63,7 +63,7 @@ const UserController = {
             res.send(user);
           } catch (error) {
             console.error(error);
-            res.status(500).send({ error: 'Ha ocurrido un error al obtener la información del usuario.' });
+            res.status(500).send({ error: 'An error occurred while getting user information' });
           }
     },
 };
