@@ -2,7 +2,7 @@ const Post = require("../models/post");
 
 const PostController = {
 
-    // Create a new product
+    // Create a new post
     async create(req, res) {
         try {
             const newPost = await Post.create({
@@ -16,7 +16,7 @@ const PostController = {
         }
     },
 
-    // Update a product
+    // Update a post
     async update(req, res) {
         try {
             const post = await Post.findByIdAndUpdate(
@@ -26,6 +26,18 @@ const PostController = {
             );
 
             res.send({ message: "pots successfully updated", post });  
+        } catch (error) {
+            console.error(error);
+        } 
+    },
+
+    // Delete post
+    async delete(req, res) {
+        try {
+            const post = await Post.findByIdAndDelete(
+                req.params._id
+            );
+            res.send({ message: `Delete post || ${post.title} || `, post });  
         } catch (error) {
             console.error(error);
         } 
