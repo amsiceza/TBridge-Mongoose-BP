@@ -5,8 +5,9 @@ const { authentication, isAuthor } = require("../middlewares/authentication");
 
 
 router.post('/create', authentication, PostController.create)
-router.put("/update/:_id", authentication, PostController.update);
-router.delete("/delete/:_id", authentication, PostController.delete);
+router.put("/update/:_id", authentication, isAuthor, PostController.update);
+router.delete("/delete/:_id", authentication, isAuthor, PostController.delete);
+router.get("/getByName/", authentication, PostController.getByName);
 
 
 
