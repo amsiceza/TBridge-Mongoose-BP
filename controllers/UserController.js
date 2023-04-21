@@ -9,7 +9,7 @@ const UserController = {
     async register(req, res) {
         try {
             const user = await User.create(req.body);
-            res.status(201).send({ message: "Usuario registrado con exito", user });
+            res.status(201).send({ message: "User registered successfully", user });
         } catch (error) {
             console.error(error);
         }
@@ -28,7 +28,7 @@ const UserController = {
             user.tokens.push(token);
             await user.save();
         
-            res.send({ message: 'Bienvenid@ ' + user.username, token });
+            res.send({ message: 'Welcome ' + user.username, token });
         
         } catch (error) {
             console.error(error);
