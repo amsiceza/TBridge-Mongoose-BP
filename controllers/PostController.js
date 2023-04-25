@@ -27,7 +27,7 @@ const PostController = {
         { new: true }
       );
 
-      res.send({ message: "pots successfully updated", post });
+      res.send({ message: "post successfully updated", post });
     } catch (error) {
       console.error(error);
     }
