@@ -75,7 +75,6 @@ const PostController = {
     // Find with comments
     async getInfo(req, res) {
         try {
-            console.log("ee")
             const post = await Post.findById(req.params._id).populate("commentIds");
             res.send(post);
         } catch (error) {
