@@ -1,4 +1,6 @@
 const Post = require("../models/post");
+const Comment = require("../models/post");
+
 
 
 const PostController = {
@@ -34,14 +36,13 @@ const PostController = {
     // Delete post
     async delete(req, res) {
         try {
-            const post = await Post.findByIdAndDelete(
-                req.params._id
-            );
-            res.send({ message: `Delete post || ${post.title} || `, post });
+          const post = await Post.findByIdAndDelete(req.params._id);
+          await Comment.deleteMany({ post: req.params._id });
+          res.send({ message: `Deleted post || ${post.title} ||`, post });
         } catch (error) {
-            console.error(error);
+          console.error(error);
         }
-    },
+      },
 
     // Find a post by title
     async getByTitle(req, res) {
@@ -75,12 +76,17 @@ const PostController = {
     // Find with comments
     async getInfo(req, res) {
         try {
-            const post = await Post.findById(req.params._id).populate("commentIds");
+            const { page = 1, limit = 10 } = req.query;
+            const post = await Post.find()
+                .populate("commentIds")
+                .find()
+                .limit(limit)
+                .skip((page - 1) * limit);
             res.send(post);
         } catch (error) {
             console.error(error);
         }
-    },
+    },    
 
 };
 
