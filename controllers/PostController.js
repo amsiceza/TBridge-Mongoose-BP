@@ -75,13 +75,17 @@ const PostController = {
     // Find with comments
     async getInfo(req, res) {
         try {
-            console.log("ee")
-            const post = await Post.findById(req.params._id).populate("commentIds");
+            const { page = 1, limit = 10 } = req.query;
+            const post = await Post.findById(req.params._id)
+                .populate("commentIds")
+                .find()
+                .limit(limit)
+                .skip((page - 1) * limit);
             res.send(post);
         } catch (error) {
             console.error(error);
         }
-    },
+    },    
 
 };
 
