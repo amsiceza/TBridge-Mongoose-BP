@@ -92,30 +92,60 @@ const PostController = {
     }
   },
 
+  //To like a post, only one like per user 
   async like(req, res) {
-  try {
-    const post = await Post.findById(req.params._id);
+    try {
+      const post = await Post.findById(req.params._id);
 
-    if (post.likes.includes(req.user._id)) {
-      return res.status(400).send({ message: "You already liked this post" });
+      if (post.likes.includes(req.user._id)) {
+        return res.status(400).send({ message: "You already liked this post" });
+      }
+
+      post.likes.push(req.user._id);
+      await post.save();
+
+      await User.findByIdAndUpdate(
+        req.user._id,
+        { $push: { wishList: req.params._id } },
+        { new: true }
+      );
+
+      res.send(post);
+    } catch (error) {
+      console.error(error);
+
+      res.status(500).send({ message: "There was a problem with your like" });
     }
+  },
 
-    post.likes.push(req.user._id);
-    await post.save();
+  //Remove like from post, only remove own like
+  async unlike(req, res) {
+    try {
+      const post = await Post.findById(req.params._id);
 
-    await User.findByIdAndUpdate(
-      req.user._id,
-      { $push: { wishList: req.params._id } },
-      { new: true }
-    );
+      if (!post.likes.includes(req.user._id)) {
+        return res.status(400).send({ message: "You haven't liked this post yet" });
+      }
 
-    res.send(post);
-  } catch (error) {
-    console.error(error);
+      const index = post.likes.indexOf(req.user._id);
+      post.likes.splice(index, 1);
+      await post.save();
 
-    res.status(500).send({ message: "There was a problem with your like" });
+      await User.findByIdAndUpdate(
+        req.user._id,
+        { $pull: { wishList: req.params._id } },
+        { new: true }
+      );
+
+      res.send(post);
+    } catch (error) {
+      console.error(error);
+
+      res.status(500).send({ message: "There was a problem with your unlike" });
+    }
   }
-}
+
+
 };
 
 module.exports = PostController;

@@ -11,9 +11,7 @@ router.get("/getByTitle/:title", authentication, PostController.getByTitle);
 router.get("/getById/:_id", authentication, PostController.getById);
 router.get("/getInfo", authentication, PostController.getInfo);
 router.post('/likes/:_id', authentication, PostController.like);
-
-
-
+router.delete('/unlike/:_id', authentication, PostController.unlike);
 
 
 
