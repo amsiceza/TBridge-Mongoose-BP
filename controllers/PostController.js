@@ -1,5 +1,6 @@
 const Post = require("../models/post");
 
+
 const PostController = {
 
     // Create a new post
@@ -61,7 +62,7 @@ const PostController = {
     // Find a post by id
     async getById(req, res) {
         try {
-            const post = await Post.findById(req.params._id);
+            const post = await Post.findById(req.params._id)
             if (!post) {
                 return res.status(404).send({ message: 'Post not found' });
             }
@@ -69,6 +70,17 @@ const PostController = {
         } catch (error) {
             console.error(error);
             res.status(500).send({ message: 'There was a problem finding the post' });
+        }
+    },
+
+    // Find with comments
+    async getInfo(req, res) {
+        try {
+            console.log("ee")
+            const post = await Post.findById(req.params._id).populate("commentIds");
+            res.send(post);
+        } catch (error) {
+            console.error(error);
         }
     },
 

@@ -7,8 +7,8 @@ const PostSchema = new mongoose.Schema({
     userId: {
         type: ObjectId,
         ref: 'user'
-    }
-
+    },
+    commentIds: [{ type: ObjectId, ref: 'Comment' }],
 }, { timestamps: true });
 
 const Post = mongoose.model('Post', PostSchema);
