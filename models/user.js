@@ -20,6 +20,7 @@ const UserSchema = new mongoose.Schema(
         role: { type: String, default: "user" },
         tokens: [],
         postIds: [{ type: ObjectId, ref: "post" }],
+        wishList: [{ type: ObjectId, ref: 'post' }]
     },
     { timestamps: true }
 );

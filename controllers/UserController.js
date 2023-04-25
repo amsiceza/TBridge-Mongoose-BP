@@ -66,6 +66,8 @@ const UserController = {
             res.status(500).send({ error: 'An error occurred while getting user information' });
           }
     },
+
+    
 };
 
 module.exports = UserController;
