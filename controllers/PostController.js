@@ -96,17 +96,20 @@ const PostController = {
     try {
       const post = await Post.findByIdAndUpdate(
         req.params._id,
-
         { $push: { likes: req.user._id } },
-
         { new: true }
       );
 
+      if (post.likes.includes(req.user._id)) {
+        return res.status(400).send({ message: "You already liked this post" });
+      };
+      
+      post.likes.push(req.user._id);
+      await post.save();
+
       await User.findByIdAndUpdate(
         req.user._id,
-
         { $push: { wishList: req.params._id } },
-
         { new: true }
       );
 
