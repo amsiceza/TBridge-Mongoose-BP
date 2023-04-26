@@ -58,8 +58,8 @@ const UserController = {
     try {
       const user = await User.findOne({
         email: req.body.email,
-        confirmed: true // Agregar condición de confirmación
       })
+
       if (!user.confirmed) {
         return res.status(401).send({ message: 'It is necessary to confirm your email' });
       }
@@ -72,6 +72,8 @@ const UserController = {
       if (!passwordMatch) {
         return res.status(400).send({ message: 'Invalid email or password' });
       }
+
+      
       // Agregar lógica para verificar contraseña y generar token de acceso
 
       const token = jwt.sign({ _id: user._id }, jwt_secret);
