@@ -5,6 +5,7 @@ const User = require('../models/user');
 
 
 const CommentController = {
+  //Create comment
   async create(req, res) {
     try {
       const comment = await Comment.create({
@@ -22,7 +23,7 @@ const CommentController = {
     }
   },
 
-  //To like a post, only one like per user 
+  //To like a comment, only one like per user 
   async like(req, res) {
     try {
       const comment = await Comment.findById(req.params._id);
