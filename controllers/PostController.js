@@ -82,10 +82,16 @@ const PostController = {
     try {
       const { page = 1, limit = 10 } = req.query;
       const posts = await Post.find()
-        .populate("userId") // Obtener usuarios que hicieron cada post
+        .populate({
+          path: "userId",
+          select: "username"
+        })
         .populate({
           path: "commentIds",
-          populate: { path: "userId" }, // Obtener usuarios que hicieron cada comentario
+          populate: {
+            path: "userId",
+            select: "username"
+          }
         })
         .limit(limit)
         .skip((page - 1) * limit);

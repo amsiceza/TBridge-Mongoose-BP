@@ -19,8 +19,8 @@ const UserSchema = new mongoose.Schema(
         },
         role: { type: String, default: "user" },
         tokens: [],
-        postIds: [{ type: ObjectId, ref: "post" }],
-        wishList: [{ type: ObjectId, ref: 'post' }]
+        postIds: [{ type: ObjectId, ref: "Post" }],
+        wishList: [{ type: ObjectId, ref: 'Post' }]
     },
     { timestamps: true }
 );
@@ -35,5 +35,4 @@ UserSchema.methods.toJSON = function() {
     }
 
 const User = mongoose.model("User", UserSchema);
-
 module.exports = User;

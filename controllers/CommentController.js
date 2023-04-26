@@ -9,7 +9,7 @@ const CommentController = {
     try {
       const comment = await Comment.create({
         body: req.body.body,
-        user: req.user._id
+        userId: req.user._id
       });
 
       await Post.findByIdAndUpdate(req.params._id,
