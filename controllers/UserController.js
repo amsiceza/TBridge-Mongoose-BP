@@ -9,42 +9,43 @@ const UserController = {
     //Endpoint register user
     async register(req, res, next) {
         try {
-            const user = await User.create(req.body);
-            await transporter.sendMail({
-                to: req.body.email,
-                subject: "Confirme su registro",
-                html: `<h3>Bienvenido, estás a un paso de registrarte </h3>
-                <a href="#"> Click para confirmar tu registro</a>
-                `,
-            });
-            res.status(201).send({
-                message: "Te hemos enviado un correo para confirmar el registro",
-                user,
-            });
+          const user = await User.create(req.body);
+      
+          const emailToken = jwt.sign({email: req.body.email}, jwt_secret, {expiresIn: '48h'});
+          const url = 'http://localhost:8080/users/confirm/' + emailToken;
+      
+          await transporter.sendMail({
+            to: req.body.email,
+            subject: "Confirme su registro",
+            html: `<h3>Bienvenido, estás a un paso de registrarte </h3>
+                   <a href="${url}"> Click para confirmar tu registro</a>
+                  `,
+          });
+      
+          res.status(201).send({
+            message: "Te hemos enviado un correo para confirmar el registro",
+            user,
+          });
         } catch (error) {
-            next(error);
+          next(error);
         }
-    },
+      },
 
     async confirm(req, res) {
         try {
-            const user = await User.findOneAndUpdate(
-                { email: req.params.email, confirmed: false },
-                { confirmed: true },
-                { new: true }
-            );
-    
-            if (!user) {
-                return res.status(404).send("No se pudo encontrar el usuario o ya ha sido confirmado");
-            }
-    
-            res.status(200).send("Usuario confirmado con éxito");
-    
+          const token = req.params.emailToken;
+          const payload = jwt.verify(token, jwt_secret);
+      
+          await User.updateOne(
+            { email: payload.email },
+            { confirmed: true }
+          );
+      
+          res.status(201).send("Usuario confirmado con éxito");
         } catch (error) {
-            console.error(error);
-            res.status(500).send("Error interno del servidor");
+          console.error(error);
         }
-    },
+      },
 
     // Endpoint login user with token
     async login(req, res) {
