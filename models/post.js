@@ -18,14 +18,8 @@ const PostSchema = new mongoose.Schema({
     likes: [{ type: ObjectId, ref: 'User' }],
 }, { timestamps: true });
 
-//adaptar para que devuelva el nombre del usuario que tiene la id
 
-PostSchema.methods.toJSON = function() {
-    const user = this._doc;
-    delete user.tokens;
-    delete user.password;
-    return user;
-    }
+
 
 const Post = mongoose.model('Post', PostSchema);
 

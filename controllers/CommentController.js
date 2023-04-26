@@ -8,7 +8,8 @@ const CommentController = {
   async create(req, res) {
     try {
       const comment = await Comment.create({
-        body: req.body.body
+        body: req.body.body,
+        user: req.user._id
       });
 
       await Post.findByIdAndUpdate(req.params._id,

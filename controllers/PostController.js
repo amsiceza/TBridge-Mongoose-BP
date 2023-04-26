@@ -1,5 +1,5 @@
 const Post = require("../models/post");
-const Comment = require("../models/post");
+const Comment = require("../models/comment");
 const User = require("../models/user");
 
 
@@ -92,7 +92,7 @@ const PostController = {
     }
   },
 
-  //To like a post, only one like per user 
+  // //To like a post, only one like per user 
   async like(req, res) {
     try {
       const post = await Post.findById(req.params._id);
@@ -118,7 +118,7 @@ const PostController = {
     }
   },
 
-  //Remove like from post, only remove own like
+  // // Remove like from post, only remove own like
   async unlike(req, res) {
     try {
       const post = await Post.findById(req.params._id);
