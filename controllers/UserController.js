@@ -106,6 +106,29 @@ const UserController = {
         }
     },
 
+    async getById(req, res, next) {
+      try {
+        const user = await User.findById(req.params._id);
+        if (!user) {
+          return res.status(404).send({ message: 'User not found' });
+        }
+        res.send(user);
+      } catch (error) {
+        next(error);
+      }
+    },
+
+    async getByUsername (req, res, next) {
+      try {
+        const users = await User.find({ username: { $regex: req.params.username, $options: 'i' } });
+        if (!users || users.length === 0) {
+          return res.status(404).send({ message: 'User not found' });
+        }
+        res.send(users);
+      } catch (error) {
+        next(error);
+      }
+    },
 
 };
 
