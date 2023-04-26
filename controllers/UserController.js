@@ -60,6 +60,9 @@ const UserController = {
         email: req.body.email,
         confirmed: true // Agregar condición de confirmación
       })
+      if (!user.confirmed) {
+        return res.status(401).send({ message: 'It is necessary to confirm your email' });
+      }
 
       if (!user) {
         return res.status(400).send({ message: 'Invalid email or password' });

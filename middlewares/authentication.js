@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const Post = require('../models/post')
+const Comment = require ('../models/comment')
 const jwt = require('jsonwebtoken');
 const { jwt_secret } = require('../config/keys.js')
 
@@ -46,4 +47,21 @@ const isAuthor = async (req, res, next) => {
 
 }
 
-module.exports = { authentication, isAdmin, isAuthor }
+const isAuthorCom = async (req, res, next) => {
+    try {
+        const comment = await Comment.findById(req.params._id);
+        if (!comment) { // si comment es null, significa que no se encontró ningún comment
+            return res.status(404).send({ message: 'Comment no encontrado' });
+        }
+        if (comment.userId.toString() !== req.user._id.toString()) {
+            return res.status(403).send({ message: 'Este pedido no es tuyo' });
+        }
+        next();
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({ error, message: 'Ha habido un problema al comprobar la autoría del commentario' })
+    }
+
+}
+
+module.exports = { authentication, isAdmin, isAuthor, isAuthorCom }
