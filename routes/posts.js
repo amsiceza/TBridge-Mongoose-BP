@@ -10,8 +10,8 @@ router.delete("/delete/:_id", authentication, isAuthor, PostController.delete);
 router.get("/getByTitle/:title", authentication, PostController.getByTitle);
 router.get("/getById/:_id", authentication, PostController.getById);
 router.get("/getInfo", authentication, PostController.getInfo);
-router.post('/likes/:_id', authentication, PostController.like);
-router.delete('/unlike/:_id', authentication, PostController.unlike);
+router.put('/likes/:_id', authentication, PostController.like);
+router.put('/unlike/:_id', authentication, PostController.unlike);
 
 
 
