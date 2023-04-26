@@ -10,7 +10,7 @@ const PostController = {
     try {
       const newPost = await Post.create({
         ...req.body,
-        userId: req.user._id,
+        userId: req.user._id
       });
       res.status(201).send(newPost);
     } catch (error) {
@@ -81,12 +81,15 @@ const PostController = {
   async getInfo(req, res) {
     try {
       const { page = 1, limit = 10 } = req.query;
-      const post = await Post.find()
-        .populate("commentIds")
-        .find()
+      const posts = await Post.find()
+        .populate("userId") // Obtener usuarios que hicieron cada post
+        .populate({
+          path: "commentIds",
+          populate: { path: "userId" }, // Obtener usuarios que hicieron cada comentario
+        })
         .limit(limit)
         .skip((page - 1) * limit);
-      res.send(post);
+      res.send(posts);
     } catch (error) {
       console.error(error);
     }
