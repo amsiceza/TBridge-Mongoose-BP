@@ -18,6 +18,7 @@ const UserSchema = new mongoose.Schema(
             required: [true, "Please enter a password"],
         },
         role: { type: String, default: "user" },
+        confirmed: { type: Boolean, default: false },
         tokens: [],
         postIds: [{ type: ObjectId, ref: "Post" }],
         wishList: [{ type: ObjectId, ref: 'Post' }]

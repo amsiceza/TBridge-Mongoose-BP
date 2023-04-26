@@ -9,9 +9,10 @@ const handleValidationErrors = (error, response) => {
 };
 
 const handleTypeError = (error, request, response, next) => {
+    console.log (error)
     if (error.name === "ValidationError") {
         handleValidationErrors(error, response);
-    } else if (error.code === 11000) {
+    } else if (error.keyPattern.email) {
         response.status(400).send("The email must be unique");
     } else {
         response.status(500).send("There was a problem");
