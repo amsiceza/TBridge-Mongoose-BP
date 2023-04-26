@@ -16,14 +16,14 @@ const UserController = {
       
           await transporter.sendMail({
             to: req.body.email,
-            subject: "Confirme su registro",
-            html: `<h3>Bienvenido, estás a un paso de registrarte </h3>
-                   <a href="${url}"> Click para confirmar tu registro</a>
+            subject: "Confirm your registration",
+            html: `<h3>Welcome, you're one step away from registering</h3>
+                   <a href="${url}">Click to confirm your registration</a>
                   `,
           });
       
           res.status(201).send({
-            message: "Te hemos enviado un correo para confirmar el registro",
+            message: "We have sent you an email to confirm your registration",
             user,
           });
         } catch (error) {
@@ -41,7 +41,7 @@ const UserController = {
             { confirmed: true }
           );
       
-          res.status(201).send("Usuario confirmado con éxito");
+          res.status(201).send("User successfully confirmed");
         } catch (error) {
           console.error(error);
         }
