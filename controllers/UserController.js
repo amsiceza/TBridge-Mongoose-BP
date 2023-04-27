@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Post = require("../models/post");
 
 const transporter = require("../config/nodemailer");
 const bcrypt = require('bcryptjs');
@@ -195,6 +196,19 @@ const UserController = {
   
         res.status(500).send({ message: "There was a problem unfollowing the user" });
 
+      }
+    },
+
+    async getUserFollowers(req, res) {
+      try {
+        const user = await User.findById(req.user._id);
+        const posts = await Post.find({ author: req.user._id });
+        const followers = user.followers.length;
+
+        res.status(200).json({ user, posts, followers });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "There was a problem getting the current user" });
       }
     }
 
