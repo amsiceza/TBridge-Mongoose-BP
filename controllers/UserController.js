@@ -145,6 +145,59 @@ const UserController = {
     }
   },
 
+    //To follow a user 
+    async follow(req, res) {
+      try {
+        const user = await User.findById(req.params._id);
+  
+        if (user.followers.includes(req.user._id)) {
+          return res.status(400).send({ message: "You already follow this user"});
+        }
+        
+        user.followers.push(req.user._id);
+        await user.save();
+        
+        await User.findByIdAndUpdate(
+          req.user._id,
+          { $push: { following: req.params._id } },
+          { new: true }
+        );
+        
+        res.send(user);
+      } catch (error) {
+        console.error(error);
+  
+        res.status(500).send({ message: "There was a problem with your follow" });
+      }
+    },
+  
+   // Remove follow from user, only remove own follow
+    async unfollow(req, res) {
+      try {
+        const user = await User.findById(req.params._id);
+  
+        if (!user.followers.includes(req.user._id)) {
+          return res.status(400).send({ message: "You are not following this user" });
+        }
+        
+        user.followers = user.followers.filter(follower => follower.toString() !== req.user._id.toString());
+        await user.save();
+        
+        await User.findByIdAndUpdate(
+          req.user._id,
+          { $pull: { following: req.params._id } },
+          { new: true }
+        );
+        
+        res.send(user);
+      } catch (error) {
+        console.error(error);
+  
+        res.status(500).send({ message: "There was a problem unfollowing the user" });
+
+      }
+    }
+
 };
 
 module.exports = UserController;
