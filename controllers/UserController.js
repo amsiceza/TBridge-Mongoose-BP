@@ -8,8 +8,7 @@ require("dotenv").config();
 
 const UserController = {
 
-<<<<<<< HEAD
-  //Endpoint register user
+ //Endpoint register user
   async register(req, res, next) {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
