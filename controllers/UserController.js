@@ -163,7 +163,7 @@ const UserController = {
           { new: true }
         );
         
-        res.send(user);
+        res.status(200).send({message: `Now you are following ${user.username}`, user});
       } catch (error) {
         console.error(error);
   
