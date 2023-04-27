@@ -38,6 +38,7 @@ const UserController = {
     }
   },
 
+  // confirm register mail
   async confirm(req, res) {
     try {
       const token = req.params.emailToken;
@@ -74,7 +75,7 @@ const UserController = {
         return res.status(400).send({ message: 'Invalid email or password' });
       }
 
-      
+
       // Agregar lógica para verificar contraseña y generar token de acceso
 
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
@@ -122,6 +123,7 @@ const UserController = {
     }
   },
 
+  // get user by Id
   async getById(req, res, next) {
     try {
       const user = await User.findById(req.params._id);
@@ -134,6 +136,7 @@ const UserController = {
     }
   },
 
+  // get user by Username
   async getByUsername(req, res, next) {
     try {
       const users = await User.find({ username: { $regex: req.params.username, $options: 'i' } });
@@ -146,71 +149,72 @@ const UserController = {
     }
   },
 
-    //To follow a user 
-    async follow(req, res) {
-      try {
-        const user = await User.findById(req.params._id);
-  
-        if (user.followers.includes(req.user._id)) {
-          return res.status(400).send({ message: "You already follow this user"});
-        }
-        
-        user.followers.push(req.user._id);
-        await user.save();
-        
-        await User.findByIdAndUpdate(
-          req.user._id,
-          { $push: { following: req.params._id } },
-          { new: true }
-        );
-        
-        res.send(user);
-      } catch (error) {
-        console.error(error);
-  
-        res.status(500).send({ message: "There was a problem with your follow" });
-      }
-    },
-  
-   // Remove follow from user, only remove own follow
-    async unfollow(req, res) {
-      try {
-        const user = await User.findById(req.params._id);
-  
-        if (!user.followers.includes(req.user._id)) {
-          return res.status(400).send({ message: "You are not following this user" });
-        }
-        
-        user.followers = user.followers.filter(follower => follower.toString() !== req.user._id.toString());
-        await user.save();
-        
-        await User.findByIdAndUpdate(
-          req.user._id,
-          { $pull: { following: req.params._id } },
-          { new: true }
-        );
-        
-        res.status(200).send({message: `Now you are not following ${user.username}`, user});
-      } catch (error) {
-        console.error(error);
-  
-        res.status(500).send({ message: "There was a problem unfollowing the user" });
+  //To follow a user 
+  async follow(req, res) {
+    try {
+      const user = await User.findById(req.params._id);
 
+      if (user.followers.includes(req.user._id)) {
+        return res.status(400).send({ message: "You already follow this user" });
       }
-    },
 
-    async getUserFollowers(req, res) {
-      try {
-        const user = await User.findById(req.user._id);
-        const posts = await Post.find({ author: req.user._id });
-        const followers = user.followers.length;
+      user.followers.push(req.user._id);
+      await user.save();
 
-        res.status(200).json({ user, posts, followers });
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "There was a problem getting the current user" });
-      }
+      await User.findByIdAndUpdate(
+        req.user._id,
+        { $push: { following: req.params._id } },
+        { new: true }
+      );
+
+      res.status(200).send({ message: `Now you are following ${user.username}`, user });
+    } catch (error) {
+      console.error(error);
+
+      res.status(500).send({ message: "There was a problem with your follow" });
     }
+  },
+
+  // Remove follow from user, only remove own follow
+  async unfollow(req, res) {
+    try {
+      const user = await User.findById(req.params._id);
+
+      if (!user.followers.includes(req.user._id)) {
+        return res.status(400).send({ message: "You are not following this user" });
+      }
+
+      user.followers = user.followers.filter(follower => follower.toString() !== req.user._id.toString());
+      await user.save();
+
+      await User.findByIdAndUpdate(
+        req.user._id,
+        { $pull: { following: req.params._id } },
+        { new: true }
+      );
+
+      res.status(200).send({ message: `Now you are not following ${user.username}`, user });
+    } catch (error) {
+      console.error(error);
+
+      res.status(500).send({ message: "There was a problem unfollowing the user" });
+
+    }
+  },
+
+  // get loged user with post and followers and number of both
+  async getUserFollowers(req, res) {
+    try {
+      const user = await User.findById(req.user._id);
+      const posts = await Post.find({ author: req.user._id });
+      const followers = user.followers.length;
+
+      res.status(200).json({ user, posts, followers });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "There was a problem getting the current user" });
+    }
+  },
 
 };
 
