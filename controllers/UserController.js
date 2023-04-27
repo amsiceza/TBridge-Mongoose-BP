@@ -1,111 +1,216 @@
 const User = require("../models/user");
+const Post = require("../models/post");
 
-const jwt = require('jsonwebtoken');
-const { jwt_secret } = require('../config/keys.js')
 const transporter = require("../config/nodemailer");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+require("dotenv").config();
 
 const UserController = {
 
-    //Endpoint register user
-    async register(req, res, next) {
-        try {
-          const user = await User.create(req.body);
-      
-          const emailToken = jwt.sign({email: req.body.email}, jwt_secret, {expiresIn: '48h'});
-          const url = 'http://localhost:8080/users/confirm/' + emailToken;
-      
-          await transporter.sendMail({
-            to: req.body.email,
-            subject: "Confirme su registro",
-            html: `<h3>Bienvenido, estás a un paso de registrarte </h3>
-                   <a href="${url}"> Click para confirmar tu registro</a>
+  //Endpoint register user
+  async register(req, res, next) {
+    try {
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const user = await User.create({
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPassword
+      });
+
+      const emailToken = jwt.sign({ email: req.body.email }, process.env.JWT_SECRET, { expiresIn: '48h' });
+      const url = 'http://localhost:8080/users/confirm/' + emailToken;
+
+      await transporter.sendMail({
+        to: req.body.email,
+        subject: "Confirm your registration",
+        html: `<h3>Welcome, you're one step away from registering</h3>
+                   <a href="${url}">Click to confirm your registration</a>
                   `,
-          });
+      });
+
+      res.status(201).send({
+        message: "We have sent you an email to confirm your registration",
+        user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async confirm(req, res) {
+    try {
+      const token = req.params.emailToken;
+      const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+      await User.updateOne(
+        { email: payload.email },
+        { confirmed: true }
+      );
+
+      res.status(201).send("User successfully confirmed");
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  // Endpoint login user with token
+  async login(req, res) {
+    try {
+      const user = await User.findOne({
+        email: req.body.email,
+      })
+
+      if (!user.confirmed) {
+        return res.status(401).send({ message: 'It is necessary to confirm your email' });
+      }
+
+      if (!user) {
+        return res.status(400).send({ message: 'Invalid email or password' });
+      }
+      const passwordMatch = await bcrypt.compare(req.body.password, user.password);
+
+      if (!passwordMatch) {
+        return res.status(400).send({ message: 'Invalid email or password' });
+      }
+
       
-          res.status(201).send({
-            message: "Te hemos enviado un correo para confirmar el registro",
-            user,
-          });
-        } catch (error) {
-          next(error);
+      // Agregar lógica para verificar contraseña y generar token de acceso
+
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+
+      if (user.tokens.length > 4) user.tokens.shift();
+      user.tokens.push(token);
+      await user.save();
+
+      res.send({ message: 'Welcome ' + user.username, token });
+
+    } catch (error) {
+      console.error(error);
+    }
+
+  },
+
+  // Endpoint logout user
+  async logout(req, res) {
+    try {
+      await User.findByIdAndUpdate(req.user._id, {
+        $pull: { tokens: req.headers.authorization },
+      });
+
+      res.send({ message: `Logged out successfully ${req.user.username}` });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({
+        message: "There was a problem trying to log out the user",
+      });
+    }
+  },
+
+  // Endpoint get authenticated user
+  async getUser(req, res) {
+    try {
+      const user = {
+        email: req.user.email,
+        username: req.user.username,
+        password: req.user.password
+      }
+      res.send(user);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: 'An error occurred while getting user information' });
+    }
+  },
+
+  async getById(req, res, next) {
+    try {
+      const user = await User.findById(req.params._id);
+      if (!user) {
+        return res.status(404).send({ message: 'User not found' });
+      }
+      res.send(user);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getByUsername(req, res, next) {
+    try {
+      const users = await User.find({ username: { $regex: req.params.username, $options: 'i' } });
+      if (!users || users.length === 0) {
+        return res.status(404).send({ message: 'User not found' });
+      }
+      res.send(users);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+    //To follow a user 
+    async follow(req, res) {
+      try {
+        const user = await User.findById(req.params._id);
+  
+        if (user.followers.includes(req.user._id)) {
+          return res.status(400).send({ message: "You already follow this user"});
         }
-      },
-
-    async confirm(req, res) {
-        try {
-          const token = req.params.emailToken;
-          const payload = jwt.verify(token, jwt_secret);
-      
-          await User.updateOne(
-            { email: payload.email },
-            { confirmed: true }
-          );
-      
-          res.status(201).send("Usuario confirmado con éxito");
-        } catch (error) {
-          console.error(error);
+        
+        user.followers.push(req.user._id);
+        await user.save();
+        
+        await User.findByIdAndUpdate(
+          req.user._id,
+          { $push: { following: req.params._id } },
+          { new: true }
+        );
+        
+        res.status(200).send({message: `Now you are following ${user.username}`, user});
+      } catch (error) {
+        console.error(error);
+  
+        res.status(500).send({ message: "There was a problem with your follow" });
+      }
+    },
+  
+   // Remove follow from user, only remove own follow
+    async unfollow(req, res) {
+      try {
+        const user = await User.findById(req.params._id);
+  
+        if (!user.followers.includes(req.user._id)) {
+          return res.status(400).send({ message: "You are not following this user" });
         }
-      },
+        
+        user.followers = user.followers.filter(follower => follower.toString() !== req.user._id.toString());
+        await user.save();
+        
+        await User.findByIdAndUpdate(
+          req.user._id,
+          { $pull: { following: req.params._id } },
+          { new: true }
+        );
+        
+        res.status(200).send({message: `Now you are not following ${user.username}`, user});
+      } catch (error) {
+        console.error(error);
+  
+        res.status(500).send({ message: "There was a problem unfollowing the user" });
 
-    // Endpoint login user with token
-    async login(req, res) {
-        try {
-            const user = await User.findOne({
-                email: req.body.email,
-                confirmed: true // Agregar condición de confirmación
-            })
-
-            if (!user) {
-                return res.status(400).send({ message: 'Invalid email or password' });
-            }
-
-            // Agregar lógica para verificar contraseña y generar token de acceso
-
-            const token = jwt.sign({ _id: user._id }, jwt_secret);
-
-            if (user.tokens.length > 4) user.tokens.shift();
-            user.tokens.push(token);
-            await user.save();
-
-            res.send({ message: 'Welcome ' + user.username, token });
-
-        } catch (error) {
-            console.error(error);
-        }
-
+      }
     },
 
-    // Endpoint logout user
-    async logout(req, res) {
-        try {
-            await User.findByIdAndUpdate(req.user._id, {
-                $pull: { tokens: req.headers.authorization },
-            });
-
-            res.send({ message: `Logged out successfully ${req.user.username}` });
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({
-                message: "There was a problem trying to log out the user",
-            });
-        }
-    },
-
-    // Endpoint get authenticated user
-    async getUser(req, res) {
-        try {
-            const user = {
-                email: req.user.email,
-                username: req.user.username,
-                password: req.user.password
-            }
-            res.send(user);
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({ error: 'An error occurred while getting user information' });
-        }
-    },
-
+    async getUserFollowers(req, res) {
+      try {
+        const user = await User.findById(req.user._id);
+        const posts = await Post.find({ author: req.user._id });
+        const followers = user.followers.length;
+    
+        res.status(200).json({ user, posts, followers });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "There was a problem getting the current user" });
+      }
+    }
 
 };
 

@@ -21,12 +21,14 @@ const UserSchema = new mongoose.Schema(
         confirmed: { type: Boolean, default: false },
         tokens: [],
         postIds: [{ type: ObjectId, ref: "Post" }],
-        wishList: [{ type: ObjectId, ref: 'Post' }]
+        likes: [{ type: ObjectId, ref: 'Post' }],
+        followers: [{ type: ObjectId, ref: 'User' }],
+        following: [{ type: ObjectId, ref: 'User' }]
     },
     { timestamps: true }
 );
 
-UserSchema.methods.toJSON = function() {
+UserSchema.methods.toJSON = function () {
     const user = this._doc;
     delete user.tokens;
     delete user.password;
@@ -34,7 +36,7 @@ UserSchema.methods.toJSON = function() {
     delete user.email;
     delete user.confirmed;
     return user;
-    }
+}
 
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
