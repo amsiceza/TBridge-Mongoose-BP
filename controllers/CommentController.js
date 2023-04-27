@@ -36,10 +36,7 @@ const CommentController = {
     }
   },
 
-<<<<<<< HEAD
   // Update comment
-=======
->>>>>>> 949e5fb (Fixed endpoint delete comment for post too)
   async update(req, res) {
     try {
       const comment = await Comment.findByIdAndUpdate(
@@ -54,10 +51,7 @@ const CommentController = {
     }
   },
 
-<<<<<<< HEAD
   // Delete comment
-=======
->>>>>>> 949e5fb (Fixed endpoint delete comment for post too)
   async delete(req, res) {
     try {
       const comment = await Comment.findByIdAndDelete(req.params._id);
@@ -68,7 +62,6 @@ const CommentController = {
       res.status(500).send({ message: `There was a problem deleting the comment: ${error.message}` });
     }
   },
-<<<<<<< HEAD
 
   //To like a comment, only one like per user 
   async like(req, res) {
@@ -110,8 +103,6 @@ const CommentController = {
       res.status(500).send({ message: "There was a problem with your unlike" });
     }
   }
-=======
->>>>>>> 949e5fb (Fixed endpoint delete comment for post too)
 };
 
 module.exports = CommentController;

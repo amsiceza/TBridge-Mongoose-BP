@@ -7,7 +7,6 @@ require("dotenv").config();
 
 const UserController = {
 
-<<<<<<< HEAD
   //Endpoint register user
   async register(req, res, next) {
     try {
@@ -73,35 +72,8 @@ const UserController = {
       if (!passwordMatch) {
         return res.status(400).send({ message: 'Invalid email or password' });
       }
-=======
-    //Endpoint register user
-    async register(req, res, next) {
-        try {
-          const user = await User.create(req.body);
-      
-          const emailToken = jwt.sign({email: req.body.email}, jwt_secret, {expiresIn: '48h'});
-          const url = 'http://localhost:8080/users/confirm/' + emailToken;
-      
-          await transporter.sendMail({
-            to: req.body.email,
-            subject: "Confirm your registration",
-            html: `<h3>Welcome, you're one step away from registering</h3>
-                   <a href="${url}">Click to confirm your registration</a>
-                  `,
-          });
-      
-          res.status(201).send({
-            message: "We have sent you an email to confirm your registration",
-            user,
-          });
-        } catch (error) {
-          next(error);
-        }
-      },
->>>>>>> 5ed82da (nodemailer fixed)
 
       
-<<<<<<< HEAD
       // Agregar lógica para verificar contraseña y generar token de acceso
 
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
@@ -180,43 +152,6 @@ const UserController = {
   
         if (user.followers.includes(req.user._id)) {
           return res.status(400).send({ message: "You already follow this user"});
-=======
-          await User.updateOne(
-            { email: payload.email },
-            { confirmed: true }
-          );
-      
-          res.status(201).send("User successfully confirmed");
-        } catch (error) {
-          console.error(error);
-        }
-      },
-
-    // Endpoint login user with token
-    async login(req, res) {
-        try {
-            const user = await User.findOne({
-                email: req.body.email,
-                confirmed: true // Agregar condición de confirmación
-            })
-
-            if (!user) {
-                return res.status(400).send({ message: 'Invalid email or password' });
-            }
-
-            // Agregar lógica para verificar contraseña y generar token de acceso
-
-            const token = jwt.sign({ _id: user._id }, jwt_secret);
-
-            if (user.tokens.length > 4) user.tokens.shift();
-            user.tokens.push(token);
-            await user.save();
-
-            res.send({ message: 'Welcome ' + user.username, token });
-
-        } catch (error) {
-            console.error(error);
->>>>>>> 5ed82da (nodemailer fixed)
         }
         
         user.followers.push(req.user._id);
@@ -261,7 +196,40 @@ const UserController = {
         res.status(500).send({ message: "There was a problem unfollowing the user" });
 
       }
-    }
+    },
+
+    async getUserFollower(req, res) {
+      try {
+        // Obtener el usuario conectado
+        const currentUser = await User.findById(req.user.id);
+    
+        // Obtener los posts del usuario y los seguidores
+        const posts = await Post.find({ userId: currentUser._id })
+          .populate('userId', 'username')
+          .populate({
+            path: 'followers',
+            populate: {
+              path: 'follower',
+              select: 'username',
+            },
+          });
+    
+        const followers = await Follower.countDocuments({ user: currentUser._id });
+    
+        res.json({
+          user: {
+            id: currentUser._id,
+            username: currentUser.username,
+          },
+          posts,
+          followers,
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al obtener la información del usuario' });
+      }
+    },
+
 
 };
 
