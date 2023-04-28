@@ -15,7 +15,8 @@ const UserController = {
       const user = await User.create({
         username: req.body.username,
         email: req.body.email,
-        password: hashedPassword
+        password: hashedPassword,
+        img: req.file.path // Agrega el campo de imagen a la base de datos
       });
 
       const emailToken = jwt.sign({ email: req.body.email }, process.env.JWT_SECRET, { expiresIn: '48h' });
@@ -35,6 +36,24 @@ const UserController = {
       });
     } catch (error) {
       next(error);
+    }
+  },
+
+  // Update a user
+  async update(req, res) {
+    try {
+      const post = await User.findByIdAndUpdate(
+        req.params._id,
+        { 
+          ...req.body,
+          img: req.file.path, 
+        },
+        { new: true }
+      );
+
+      res.send({ message: "User successfully updated", user });
+    } catch (error) {
+      console.error(error);
     }
   },
 

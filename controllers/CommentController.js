@@ -10,7 +10,8 @@ const CommentController = {
       const comment = await Comment.create({
         body: req.body.body,
         userId: req.user._id,
-        postId: req.params._id
+        postId: req.params._id,
+        img: req.file.path
       });
 
       await Post.findByIdAndUpdate(req.params._id,
@@ -39,7 +40,11 @@ const CommentController = {
     try {
       const comment = await Comment.findByIdAndUpdate(
         req.params._id,
-        { ...req.body, userId: req.user._id },
+        { 
+          ...req.body, 
+          img: req.file.path,
+          userId: req.user._id 
+        },
         { new: true }
       );
       res.status(201).send({ message: "Comment update successfully", comment });

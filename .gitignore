@@ -2,3 +2,4 @@
 /config/keys.js
 /config/nodemailer.js
 /.env
+/uploads

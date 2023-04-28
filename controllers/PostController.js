@@ -10,6 +10,7 @@ const PostController = {
     try {
       const newPost = await Post.create({
         ...req.body,
+        img: req.file.path, // Agrega el campo de imagen a la base de datos
         userId: req.user._id
       });
       res.status(201).send(newPost);
@@ -23,7 +24,11 @@ const PostController = {
     try {
       const post = await Post.findByIdAndUpdate(
         req.params._id,
-        { ...req.body, userId: req.user._id },
+        { 
+          ...req.body,
+          img: req.file.path, 
+          userId: req.user._id 
+        },
         { new: true }
       );
 
