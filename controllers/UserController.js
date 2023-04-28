@@ -45,7 +45,7 @@ const UserController = {
       const authenticatedUserId = req.user._id;
       const userToUpdateId = req.params._id;
   
-      if (authenticatedUserId !== userToUpdateId) {
+      if (authenticatedUserId != userToUpdateId) {
         return res.status(403).send({ message: "You do not have permission to update this user" });
       }
   
