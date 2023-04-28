@@ -14,6 +14,7 @@ router.get("/getByUsername/:username", authentication, UserController.getByUsern
 router.put('/follow/:_id', authentication, UserController.follow);
 router.put('/unfollow/:_id', authentication, UserController.unfollow);
 router.get("/getUserFollowers", authentication, UserController.getUserFollowers);
+router.get("/getUserFollowersInfo", authentication, UserController.getUserFollowersInfo);
 
 
 module.exports = router;

@@ -216,6 +216,20 @@ const UserController = {
     }
   },
 
+  async getUserFollowersInfo(req, res) {
+    try {
+      const user = await User.findById(req.user._id).populate('followers', 'username');
+      const posts = await Post.find({ author: req.user._id });
+      const followers = user.followers.length;
+      const followerNames = user.followers.map(follower => follower.username);
+  
+      res.status(200).json({ user, posts, followers, followerNames });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "There was a problem getting the user info" });
+    }
+  }
+
 };
 
 module.exports = UserController;
