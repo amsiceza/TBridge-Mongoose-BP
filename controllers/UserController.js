@@ -2,12 +2,11 @@ const User = require("../models/user");
 const Post = require("../models/post");
 
 const transporter = require("../config/nodemailer");
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const UserController = {
-
   //Endpoint register user
   async register(req, res, next) {
     try {
@@ -16,11 +15,15 @@ const UserController = {
         username: req.body.username,
         email: req.body.email,
         password: hashedPassword,
-        img: req.file.path // Agrega el campo de imagen a la base de datos
+        img: req.file.path, // Agrega el campo de imagen a la base de datos
       });
 
-      const emailToken = jwt.sign({ email: req.body.email }, process.env.JWT_SECRET, { expiresIn: '48h' });
-      const url = 'http://localhost:8080/users/confirm/' + emailToken;
+      const emailToken = jwt.sign(
+        { email: req.body.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "48h" }
+      );
+      const url = "http://localhost:8080/users/confirm/" + emailToken;
 
       await transporter.sendMail({
         to: req.body.email,
@@ -44,13 +47,15 @@ const UserController = {
     try {
       const authenticatedUserId = req.user._id;
       const userToUpdateId = req.params._id;
-  
+
       if (authenticatedUserId != userToUpdateId) {
-        return res.status(403).send({ message: "You do not have permission to update this user" });
+        return res
+          .status(403)
+          .send({ message: "You do not have permission to update this user" });
       }
-  
+
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  
+
       const user = await User.findByIdAndUpdate(
         userToUpdateId,
         {
@@ -61,7 +66,7 @@ const UserController = {
         },
         { new: true }
       );
-  
+
       res.send({ message: "User successfully updated", user });
     } catch (error) {
       next(error);
@@ -74,10 +79,7 @@ const UserController = {
       const token = req.params.emailToken;
       const payload = jwt.verify(token, process.env.JWT_SECRET);
 
-      await User.updateOne(
-        { email: payload.email },
-        { confirmed: true }
-      );
+      await User.updateOne({ email: payload.email }, { confirmed: true });
 
       res.status(201).send("User successfully confirmed");
     } catch (error) {
@@ -90,19 +92,24 @@ const UserController = {
     try {
       const user = await User.findOne({
         email: req.body.email,
-      })
+      });
 
       if (!user.confirmed) {
-        return res.status(401).send({ message: 'It is necessary to confirm your email' });
+        return res
+          .status(401)
+          .send({ message: "It is necessary to confirm your email" });
       }
 
       if (!user) {
-        return res.status(400).send({ message: 'Invalid email or password' });
+        return res.status(400).send({ message: "Invalid email or password" });
       }
-      const passwordMatch = await bcrypt.compare(req.body.password, user.password);
+      const passwordMatch = await bcrypt.compare(
+        req.body.password,
+        user.password
+      );
 
       if (!passwordMatch) {
-        return res.status(400).send({ message: 'Invalid email or password' });
+        return res.status(400).send({ message: "Invalid email or password" });
       }
 
       // Agregar lógica para verificar contraseña y generar token de acceso
@@ -113,12 +120,10 @@ const UserController = {
       user.tokens.push(token);
       await user.save();
 
-      res.send({ message: 'Welcome ' + user.username, token });
-
+      res.send({ message: "Welcome " + user.username, token });
     } catch (error) {
       console.error(error);
     }
-
   },
 
   // Endpoint logout user
@@ -143,12 +148,14 @@ const UserController = {
       const user = {
         email: req.user.email,
         username: req.user.username,
-        password: req.user.password
-      }
+        password: req.user.password,
+      };
       res.send(user);
     } catch (error) {
       console.error(error);
-      res.status(500).send({ error: 'An error occurred while getting user information' });
+      res
+        .status(500)
+        .send({ error: "An error occurred while getting user information" });
     }
   },
 
@@ -157,7 +164,7 @@ const UserController = {
     try {
       const user = await User.findById(req.params._id);
       if (!user) {
-        return res.status(404).send({ message: 'User not found' });
+        return res.status(404).send({ message: "User not found" });
       }
       res.send(user);
     } catch (error) {
@@ -168,9 +175,11 @@ const UserController = {
   // get user by Username
   async getByUsername(req, res, next) {
     try {
-      const users = await User.find({ username: { $regex: req.params.username, $options: 'i' } });
+      const users = await User.find({
+        username: { $regex: req.params.username, $options: "i" },
+      });
       if (!users || users.length === 0) {
-        return res.status(404).send({ message: 'User not found' });
+        return res.status(404).send({ message: "User not found" });
       }
       res.send(users);
     } catch (error) {
@@ -178,13 +187,15 @@ const UserController = {
     }
   },
 
-  //To follow a user 
+  //To follow a user
   async follow(req, res) {
     try {
       const user = await User.findById(req.params._id);
 
       if (user.followers.includes(req.user._id)) {
-        return res.status(400).send({ message: "You already follow this user" });
+        return res
+          .status(400)
+          .send({ message: "You already follow this user" });
       }
 
       user.followers.push(req.user._id);
@@ -196,7 +207,9 @@ const UserController = {
         { new: true }
       );
 
-      res.status(200).send({ message: `Now you are following ${user.username}`, user });
+      res
+        .status(200)
+        .send({ message: `Now you are following ${user.username}`, user });
     } catch (error) {
       console.error(error);
 
@@ -210,10 +223,14 @@ const UserController = {
       const user = await User.findById(req.params._id);
 
       if (!user.followers.includes(req.user._id)) {
-        return res.status(400).send({ message: "You are not following this user" });
+        return res
+          .status(400)
+          .send({ message: "You are not following this user" });
       }
 
-      user.followers = user.followers.filter(follower => follower.toString() !== req.user._id.toString());
+      user.followers = user.followers.filter(
+        (follower) => follower.toString() !== req.user._id.toString()
+      );
       await user.save();
 
       await User.findByIdAndUpdate(
@@ -222,12 +239,15 @@ const UserController = {
         { new: true }
       );
 
-      res.status(200).send({ message: `Now you are not following ${user.username}`, user });
+      res
+        .status(200)
+        .send({ message: `Now you are not following ${user.username}`, user });
     } catch (error) {
       console.error(error);
 
-      res.status(500).send({ message: "There was a problem unfollowing the user" });
-
+      res
+        .status(500)
+        .send({ message: "There was a problem unfollowing the user" });
     }
   },
 
@@ -241,24 +261,69 @@ const UserController = {
       res.status(200).json({ user, posts, followers });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "There was a problem getting the current user" });
+      res
+        .status(500)
+        .json({ message: "There was a problem getting the current user" });
     }
   },
 
   async getUserFollowersInfo(req, res) {
     try {
-      const user = await User.findById(req.user._id).populate('followers', 'username');
+      const user = await User.findById(req.user._id).populate(
+        "followers",
+        "username"
+      );
       const posts = await Post.find({ author: req.user._id });
       const followers = user.followers.length;
-      const followerNames = user.followers.map(follower => follower.username);
+      const followerNames = user.followers.map((follower) => follower.username);
 
       res.status(200).json({ user, posts, followers, followerNames });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "There was a problem getting the user info" });
+      res
+        .status(500)
+        .json({ message: "There was a problem getting the user info" });
     }
-  }
+  },
 
+  async recoverPassword(req, res) {
+    try {
+      const recoverToken = jwt.sign(
+        { email: req.params.email },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "48h",
+        }
+      );
+      const url = "http://localhost:3000/users/resetPassword/" + recoverToken;
+      await transporter.sendMail({
+        to: req.params.email,
+        subject: "Recuperar contraseña",
+        html: `<h3> Recuperar contraseña </h3>
+      <a href="${url}">Recuperar contraseña</a>
+      El enlace expirará en 48 horas`,
+      });
+      res.send({
+        message: "Un correo de recuperación se envio a tu dirección de correo",
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async resetPassword(req, res) {
+    try {
+      const recoverToken = req.params.recoverToken;
+      const payload = jwt.verify(recoverToken, process.env.JWT_SECRET);
+      await User.findOneAndUpdate(
+        { email: payload.email },
+        { password: req.body.password }
+      );
+      res.send({ message: "contraseña cambiada con éxito" });
+    } catch (error) {
+      console.error(error);
+    }
+  },
 };
 
 module.exports = UserController;
