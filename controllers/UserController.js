@@ -42,11 +42,15 @@ const UserController = {
   // Update a user
   async update(req, res) {
     try {
-      const post = await User.findByIdAndUpdate(
+      // Verificar si el usuario que está autenticado es el mismo que el que se está actualizando
+      if (req.user._id !== req.params._id) {
+        return res.status(403).send({ message: "You do not have permission" });
+      }
+      const user = await User.findByIdAndUpdate(
         req.params._id,
-        { 
+        {
           ...req.body,
-          img: req.file.path, 
+          img: req.file.path,
         },
         { new: true }
       );
@@ -240,7 +244,7 @@ const UserController = {
       const posts = await Post.find({ author: req.user._id });
       const followers = user.followers.length;
       const followerNames = user.followers.map(follower => follower.username);
-  
+
       res.status(200).json({ user, posts, followers, followerNames });
     } catch (error) {
       console.error(error);
