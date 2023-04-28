@@ -295,7 +295,7 @@ const UserController = {
           expiresIn: "48h",
         }
       );
-      const url = "http://localhost:3000/users/resetPassword/" + recoverToken;
+      const url = "http://localhost:8080/users/resetPassword/" + recoverToken;
       await transporter.sendMail({
         to: req.params.email,
         subject: "Recuperar contraseña",
@@ -313,11 +313,12 @@ const UserController = {
 
   async resetPassword(req, res) {
     try {
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
       const recoverToken = req.params.recoverToken;
       const payload = jwt.verify(recoverToken, process.env.JWT_SECRET);
       await User.findOneAndUpdate(
         { email: payload.email },
-        { password: req.body.password }
+        { password: hashedPassword }
       );
       res.send({ message: "contraseña cambiada con éxito" });
     } catch (error) {
