@@ -344,6 +344,7 @@ _Menciona las herramientas que utilizaste para crear tu proyecto_
 * [*POSTMAN*](https://www.postman.com/) - Herramienta para testear las API
 * [*Mongo DB*](https://www.mongodb.com/) - Herramienta para crear y gestionar bases de datos NoSQL orientada a documentos
 * [*Mongo Atlas*](https://www.mongodb.com/atlas/database) - MongoDB Atlas es una DaaS (Base de datos como servicio) de MongoDB
+* [*Swagger*](https://swagger.io/) - Herramienta  para diseñar, construir, documentar y probar tu API.
 
 
 ## Versionado 📌

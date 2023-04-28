@@ -120,7 +120,7 @@ const UserController = {
       user.tokens.push(token);
       await user.save();
 
-      res.send({ message: "Welcome " + user.username, token });
+      res.status(200).send({ message: "Welcome " + user.username, token });
     } catch (error) {
       console.error(error);
     }
@@ -298,13 +298,13 @@ const UserController = {
       const url = "http://localhost:8080/users/resetPassword/" + recoverToken;
       await transporter.sendMail({
         to: req.params.email,
-        subject: "Recuperar contraseña",
-        html: `<h3> Recuperar contraseña </h3>
-      <a href="${url}">Recuperar contraseña</a>
-      El enlace expirará en 48 horas`,
+        subject: "Recover Password",
+        html: `<h3> Recover Password </h3>
+      <a href="${url}">Recover Password</a>
+      The link will expire in 48 hours`,
       });
       res.send({
-        message: "Un correo de recuperación se envio a tu dirección de correo",
+        message: "A recovery email was sent to your email address",
       });
     } catch (error) {
       console.error(error);
@@ -320,7 +320,7 @@ const UserController = {
         { email: payload.email },
         { password: hashedPassword }
       );
-      res.send({ message: "contraseña cambiada con éxito" });
+      res.send({ message: "Password changed successfully" });
     } catch (error) {
       console.error(error);
     }
