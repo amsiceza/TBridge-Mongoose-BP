@@ -13,6 +13,11 @@ router.get("/getById/:_id", authentication, UserController.getById);
 router.get("/getByUsername/:username", authentication, UserController.getByUsername);
 router.put('/follow/:_id', authentication, UserController.follow);
 router.put('/unfollow/:_id', authentication, UserController.unfollow);
+<<<<<<< HEAD
+=======
+router.get("/getUserFollowers", authentication, UserController.getUserFollowers);
+router.get("/getUserFollowersInfo", authentication, UserController.getUserFollowersInfo);
+>>>>>>> develop
 
 
 module.exports = router;
