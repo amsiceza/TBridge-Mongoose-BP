@@ -40,24 +40,31 @@ const UserController = {
   },
 
   // Update a user
-  async update(req, res) {
+  async update(req, res, next) {
     try {
-      // Verificar si el usuario que está autenticado es el mismo que el que se está actualizando
-      if (req.user._id !== req.params._id) {
-        return res.status(403).send({ message: "You do not have permission" });
+      const authenticatedUserId = req.user._id;
+      const userToUpdateId = req.params._id;
+  
+      if (authenticatedUserId !== userToUpdateId) {
+        return res.status(403).send({ message: "You do not have permission to update this user" });
       }
+  
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  
       const user = await User.findByIdAndUpdate(
-        req.params._id,
+        userToUpdateId,
         {
-          ...req.body,
+          username: req.body.username,
+          email: req.body.email,
+          password: hashedPassword,
           img: req.file.path,
         },
         { new: true }
       );
-
+  
       res.send({ message: "User successfully updated", user });
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   },
 

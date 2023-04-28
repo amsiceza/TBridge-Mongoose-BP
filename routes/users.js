@@ -6,7 +6,7 @@ const { authentication } = require("../middlewares/authentication");
 
 
 router.post('/register',upload.single('img'),UserController.register)
-router.put('/update',authentication, upload.single('img'), UserController.update)
+router.put('/update/:_id',authentication, upload.single('img'), UserController.update)
 router.post('/login',UserController.login)
 router.delete('/logout',authentication , UserController.logout)
 router.get('/getUser', authentication, UserController.getUser)

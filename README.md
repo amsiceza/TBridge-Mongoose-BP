@@ -353,7 +353,7 @@ Usamos [SemVer](http://semver.org/) para el versionado. Para todas las versiones
 ## Autores ✒️
 
 * **Guillermo Soler Fernández** - *Proyecto API Backend - Mongoose-Node-Express* - [GuilleSoler87](https://github.com/GuilleSoler87)
-* **Ismael Cervera** - *Proyecto API Backend - Mongoose-Node-Express* - [amsiceza](https://github.com/amsiceza)
+* **Ismael Cervera Zamora** - *Proyecto API Backend - Mongoose-Node-Express* - [amsiceza](https://github.com/amsiceza)
   
 
 
