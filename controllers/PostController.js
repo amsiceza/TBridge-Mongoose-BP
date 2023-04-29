@@ -1,6 +1,6 @@
-const Post = require("../models/Post");
-const Comment = require("../models/Comment");
-const User = require("../models/User");
+const Post = require("../models/post");
+const Comment = require("../models/comment");
+const User = require("../models/user");
 
 
 
