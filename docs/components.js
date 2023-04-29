@@ -218,6 +218,11 @@ module.exports = {
                     },
                 }
             },
+            _id: {
+                type: 'objectId',
+                description: "An id param",
+                example: "6201064b0028de7866e2b2c4"
+            },
             UserLogin: {
                 type: 'object',
                 properties: {
@@ -232,6 +237,27 @@ module.exports = {
                         example: "1234asdf"
                     }
 
+                }
+            },
+            PostInput: {
+                type: 'object',
+                properties: {
+                    title: {
+                        type: 'string',
+                        description: "title's post",
+                        example: "Example 1 title's post 01"
+                    },
+                    body: {
+                        type: 'string',
+                        description: "body's post",
+                        example: "Example 1 body's post 01"
+                    },
+                    img: {
+                        type: 'string',
+                        format: 'binary',
+                        description: "Image of the post",
+                        example: "image/jpeg"
+                    }
                 }
             }
         }

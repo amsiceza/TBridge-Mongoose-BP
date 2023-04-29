@@ -4,7 +4,7 @@ module.exports = {
         "/users/login": {
             post: {
                 tags: {
-                    Users: "Login a user",
+                    Users: "-Login a user",
                 },
                 description: "Login a user",
                 operationId: "login",
@@ -32,33 +32,127 @@ module.exports = {
             }
         },
         //ENDPOINTS SPACE FOR POSTS
-        // "/posts/create": {
-        //     post: {
-        //         tags: {
-        //             Tasks: "Create a task",
-        //         },
-        //         description: "Create Task",
-        //         operationId: "createTask",
-        //         parameters: [],
-        //         requestBody: {
-        //             content: {
-        //                 "application/json": {
-        //                     schema: {
-        //                         $ref: "#/components/schemas/TaskInput",
-        //                     },
-        //                 },
-        //             },
-        //         },
-        //         responses: {
-        //             201: {
-        //                 description: "Task created successfully",
-        //             },
-        //             500: {
-        //                 description: "Server error",
-        //             },
-        //         },
-        //     },
-        // },
+        "/posts/create": {
+            post: {
+                security: [{
+                    ApiKeyAuth: []
+                }],
+                tags: {
+                    Posts: "-Create a post",
+                },
+                description: "Create a post",
+                operationId: "create",
+                parameters: [],
+                requestBody: {
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/PostInput",
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    201: {
+                        description: "Post created successfully",
+                    },
+                    500: {
+                        description: "There was a problem",
+                    },
+                },
+            },
+        },
+        "/posts/update/644d9468a8c90df3e92c414b": {
+            put: {
+                security: [{
+                    ApiKeyAuth: []
+                }],
+                tags: {
+                    Posts: "-Update a post",
+                },
+                description: "Update a post",
+                operationId: "update",
+                parameters: [
+                    {
+                        name: "_id",
+                        in: "path",
+                        schema: {
+                        $ref: "#/components/schemas/_id",
+                        },
+                    }
+                ],
+                requestBody: {
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/PostInput",
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    201: {
+                        description: "Post updated successfully",
+                    },
+                    500: {
+                        description: "There was a problem",
+                    },
+                },
+            },
+        },
+        "/posts/delete/644d9465a8c90df3e92c4148": {
+            delete: {
+                security: [{
+                    ApiKeyAuth: []
+                }],
+                tags: {
+                    Posts: "-Delete Post by Id",
+                },
+                description: "Delete Post by Id",
+                operationId: "delete",
+                parameters: [
+                    {
+                        name: "_id",
+                        in: "path",
+                        schema: {
+                        $ref: "#/components/schemas/_id",
+                        },
+                    }
+                ],
+                responses: {
+                    200: {
+                        description: "Deleted post || ${post.title} ||",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    $ref: "#/components/schemas/post",
+                                },
+                            },
+                        },
+                    },
+                    404: {
+                        description: "Post not found",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    $ref: "#/components/schemas/post",
+                                },
+                            },
+                        },
+                    },
+                    500: {
+                        description: "There was a problem finding the posts",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    $ref: "#/components/schemas/post",
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
         "/posts/getByTitle/Adios": {
             get: {
                 security: [{
@@ -72,7 +166,50 @@ module.exports = {
                 parameters: [],
                 responses: {
                     404: {
-                        description: "No posts found",
+                        description: "Post not found",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    $ref: "#/components/schemas/post",
+                                },
+                            },
+                        },
+                    },
+                    500: {
+                        description: "There was a problem finding the posts",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    $ref: "#/components/schemas/post",
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        "/posts/getById/644d9468a8c90df3e92c414b": {
+            get: {
+                security: [{
+                    ApiKeyAuth: []
+                }],
+                tags: {
+                    Posts: "-Get Post by Id",
+                },
+                description: "Get Post by Id",
+                operationId: "getById",
+                parameters: [
+                    {
+                        name: "_id",
+                        in: "path",
+                        schema: {
+                        $ref: "#/components/schemas/_id",
+                        },
+                    }
+                ],
+                responses: {
+                    404: {
+                        description: "Post not found",
                         content: {
                             "application/json": {
                                 schema: {

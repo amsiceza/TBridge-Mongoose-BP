@@ -8,12 +8,16 @@ const PostController = {
   // Create a new post
   async create(req, res, next) {
     try {
+      let imgPath;
+      if (req.file) {
+        imgPath = req.file.path;
+      }
       const newPost = await Post.create({
         ...req.body,
-        img: req.file.path, // Agrega el campo de imagen a la base de datos
-        userId: req.user._id
+        img: imgPath,
+        userId: req.user._id,
       });
-      res.status(201).send(newPost);
+      res.status(201).send({ message: "post created successfully", newPost });
     } catch (error) {
       next(error);
     }
@@ -22,13 +26,17 @@ const PostController = {
   // Update a post
   async update(req, res) {
     try {
+      const updateFields = { 
+        ...req.body,
+        userId: req.user._id 
+      };
+      if (req.file) {
+        updateFields.img = req.file.path;
+      }
+
       const post = await Post.findByIdAndUpdate(
         req.params._id,
-        { 
-          ...req.body,
-          img: req.file.path, 
-          userId: req.user._id 
-        },
+        updateFields,
         { new: true }
       );
 
@@ -38,10 +46,14 @@ const PostController = {
     }
   },
 
+
   // Delete post
   async delete(req, res) {
     try {
       const post = await Post.findByIdAndDelete(req.params._id);
+      if (!post) {
+        return res.status(404).send({ message: "Post not found" });
+      }
       await Comment.deleteMany({ post: req.params._id });
       res.send({ message: `Deleted post || ${post.title} ||`, post });
     } catch (error) {
