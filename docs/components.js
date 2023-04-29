@@ -66,6 +66,36 @@ module.exports = {
                         },
                         description: "Array containing the IDs of the posts that the user has liked"
                     },
+                    wishList: {
+                        type: 'array',
+                        items: {
+                            type: 'string',
+                            format: 'objectId',
+                            description: "IDs of the posts that the user has liked",
+                            example: "644b9b731fc464716e8401cb"
+                        },
+                        description: "Array containing the IDs of the posts that the user has liked"
+                    },
+                    likesCom: {
+                        type: 'array',
+                        items: {
+                            type: 'string',
+                            format: 'objectId',
+                            description: "IDs of the comments that the user has liked",
+                            example: "644b9b731fc464716e8401cb"
+                        },
+                        description: "Array containing the IDs of the comments that the user has liked"
+                    },
+                    wishListCom: {
+                        type: 'array',
+                        items: {
+                            type: 'string',
+                            format: 'objectId',
+                            description: "IDs of the comments that the user has liked",
+                            example: "644b9b731fc464716e8401cb"
+                        },
+                        description: "Array containing the IDs of the comments that the user has liked"
+                    },
                     followers: {
                         type: 'array',
                         items: {
