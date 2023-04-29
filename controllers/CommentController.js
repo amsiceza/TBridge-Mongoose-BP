@@ -1,5 +1,6 @@
-const Comment = require("../models/comment");
-const Post = require("../models/post");
+const Comment = require("../models/Comment");
+const Post = require("../models/Post");
+const User = require("../models/User");
 
 
 const CommentController = {
@@ -71,12 +72,18 @@ const CommentController = {
     try {
       const comment = await Comment.findById(req.params._id);
 
-      if (comment.likes.includes(req.user._id)) {
+      if (comment.likesCom.includes(req.user._id)) {
         return res.status(400).send({ message: "You already liked this comment" });
       }
 
-      comment.likes.push(req.user._id);
+      comment.likesCom.push(req.user._id);
       await comment.save();
+
+      await User.findByIdAndUpdate(
+        req.user._id,
+        { $push: { wishListCom: req.params._id } },
+        { new: true }
+      );
 
       res.send(comment);
     } catch (error) {
@@ -91,13 +98,19 @@ const CommentController = {
     try {
       const comment = await Comment.findById(req.params._id);
 
-      if (!comment.likes.includes(req.user._id)) {
+      if (!comment.likesCom.includes(req.user._id)) {
         return res.status(400).send({ message: "You haven't liked this comment yet" });
       }
 
-      const index = comment.likes.indexOf(req.user._id);
-      comment.likes.splice(index, 1);
+      const index = comment.likesCom.indexOf(req.user._id);
+      comment.likesCom.splice(index, 1);
       await comment.save();
+
+      await User.findByIdAndUpdate(
+        req.user._id,
+        { $pull: { wishListCom: req.params._id } },
+        { new: true }
+      );
 
       res.send(comment);
     } catch (error) {
@@ -107,46 +120,7 @@ const CommentController = {
     }
   },
 
-  //To like a comment, only one like per user 
-  async like(req, res) {
-    try {
-      const comment = await Comment.findById(req.params._id);
-
-      if (comment.likes.includes(req.user._id)) {
-        return res.status(400).send({ message: "You already liked this comment" });
-      }
-
-      comment.likes.push(req.user._id);
-      await comment.save();
-
-      res.send(comment);
-    } catch (error) {
-      console.error(error);
-
-      res.status(500).send({ message: "There was a problem with your like" });
-    }
-  },
-
-  // Remove like from comment, only remove own like
-  async unlike(req, res) {
-    try {
-      const comment = await Comment.findById(req.params._id);
-
-      if (!comment.likes.includes(req.user._id)) {
-        return res.status(400).send({ message: "You haven't liked this comment yet" });
-      }
-
-      const index = comment.likes.indexOf(req.user._id);
-      comment.likes.splice(index, 1);
-      await comment.save();
-
-      res.send(comment);
-    } catch (error) {
-      console.error(error);
-
-      res.status(500).send({ message: "There was a problem with your unlike" });
-    }
-  }
+  
 };
 
 module.exports = CommentController;
