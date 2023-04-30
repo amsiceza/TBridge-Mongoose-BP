@@ -11,11 +11,15 @@ const UserController = {
   async register(req, res, next) {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      let imgPath;
+      if (req.file) {
+        imgPath = req.file.path;
+      }
       const user = await User.create({
         username: req.body.username,
         email: req.body.email,
         password: hashedPassword,
-        img: req.file.path, // Agrega el campo de imagen a la base de datos
+        img: imgPath, // Agrega el campo de imagen a la base de datos
       });
 
       const emailToken = jwt.sign(
@@ -56,13 +60,18 @@ const UserController = {
 
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+      let imgPath;
+      if (req.file) {
+        imgPath = req.file.path;
+      }
+
       const user = await User.findByIdAndUpdate(
         userToUpdateId,
         {
           username: req.body.username,
           email: req.body.email,
           password: hashedPassword,
-          img: req.file.path,
+          img: imgPath,
         },
         { new: true }
       );
