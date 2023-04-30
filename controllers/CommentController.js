@@ -4,15 +4,19 @@ const User = require("../models/user")
 
 
 const CommentController = {
- 
+
   // Create comment
   async create(req, res) {
     try {
+      let imgPath;
+      if (req.file) {
+        imgPath = req.file.path;
+      }
       const comment = await Comment.create({
         body: req.body.body,
         userId: req.user._id,
         postId: req.params._id,
-        img: req.file.path
+        img: imgPath
       });
 
       await Post.findByIdAndUpdate(req.params._id,
@@ -25,42 +29,53 @@ const CommentController = {
     }
   },
 
+
   // Get comment
   async getAll(req, res) {
     try {
       const comment = await Comment.find();
-      res.status(201).send({ message: "We finded all this comments", comment });
+      res.status(200).send({ message: "We finded all this comments", comment });
     } catch (error) {
       console.error(error);
-      res.status(500).send({ message: `There was a problem creating the comment: ${error.message}` });
+      res.status(500).send({ message: `There was a problem getting the comment: ${error.message}` });
     }
   },
 
   // Update comment
   async update(req, res) {
     try {
+      const updateFields = { 
+        ...req.body,
+        userId: req.user._id 
+      };
+      if (req.file) {
+        updateFields.img = req.file.path;
+      }
+  
       const comment = await Comment.findByIdAndUpdate(
         req.params._id,
-        { 
-          ...req.body, 
-          img: req.file.path,
-          userId: req.user._id 
-        },
+        updateFields,
         { new: true }
       );
-      res.status(201).send({ message: "Comment update successfully", comment });
+      if (!comment) {
+        return res.status(404).send({ message: "Comment not found" });
+      }
+      res.send({ message: "Comment updated successfully", comment });
     } catch (error) {
       console.error(error);
-      res.status(500).send({ message: `There was a problem creating the comment: ${error.message}` });
+      res.status(500).send({ message: `There was a problem updating the comment: ${error.message}` });
     }
-  },
+  },  
 
   // Delete comment
   async delete(req, res) {
     try {
       const comment = await Comment.findByIdAndDelete(req.params._id);
       await Post.findByIdAndUpdate(comment.postId, { $pull: { commentIds: comment._id } });
-      res.send({ message: "Deleted comment", comment });
+      if (!comment) {
+        return res.status(404).send({ message: "Comment not found" });
+      }
+      res.send({ message: "Comment deleted", comment });
     } catch (error) {
       console.error(error);
       res.status(500).send({ message: `There was a problem deleting the comment: ${error.message}` });
@@ -120,7 +135,7 @@ const CommentController = {
     }
   },
 
-  
+
 };
 
 module.exports = CommentController;

@@ -5,7 +5,7 @@ const CommentController = require('../controllers/CommentController');
 const { authentication, isAuthorCom } = require("../middlewares/authentication");
 
 router.post('/create/:_id',authentication, upload.single('img'),CommentController.create)
-router.get('/getAll', CommentController.getAll)
+router.get('/getAll',authentication, CommentController.getAll)
 router.put('/update/:_id',authentication, isAuthorCom, upload.single('img'), CommentController.update)
 router.delete('/delete/:_id',authentication, isAuthorCom, CommentController.delete)
 router.put('/likes/:_id', authentication, CommentController.like);

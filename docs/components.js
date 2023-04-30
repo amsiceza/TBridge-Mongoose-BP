@@ -220,7 +220,7 @@ module.exports = {
             },
             _id: {
                 type: 'objectId',
-                description: "An id param",
+                description: "An Id param",
                 example: "6201064b0028de7866e2b2c4"
             },
             UserLogin: {
@@ -247,6 +247,22 @@ module.exports = {
                         description: "title's post",
                         example: "Example 1 title's post 01"
                     },
+                    body: {
+                        type: 'string',
+                        description: "body's post",
+                        example: "Example 1 body's post 01"
+                    },
+                    img: {
+                        type: 'string',
+                        format: 'binary',
+                        description: "Image of the post",
+                        example: "image/jpeg"
+                    }
+                }
+            },
+            CommentInput: {
+                type: 'object',
+                properties: {
                     body: {
                         type: 'string',
                         description: "body's post",

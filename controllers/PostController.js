@@ -39,7 +39,9 @@ const PostController = {
         updateFields,
         { new: true }
       );
-
+      if (!post) {
+        return res.status(404).send({ message: "Post not found" });
+      }
       res.send({ message: "post successfully updated", post });
     } catch (error) {
       console.error(error);
