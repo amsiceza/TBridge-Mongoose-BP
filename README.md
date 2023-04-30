@@ -1,3 +1,4 @@
+![Img](./img/socialnetwork.jpg)
 # SOCIAL NETWORK - PROYECTO BACKEND (MONGOOSE)
 
 En este proyecto encontramos una base de datos no relacional que simula una red social. Los datos que almacenamos dentro de esta base de datos son:
