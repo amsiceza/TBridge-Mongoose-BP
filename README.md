@@ -340,7 +340,7 @@ Multer es un middleware para Express y Node. js que hace que sea fácil manipula
 
 ● npm i multer
 
-- En la carpeta “middlewares” creamos un archivo llamado “multer.js”.
+- En la carpeta “middlewares” creamos un archivo llamado “multer.js” (Además crearemos carpeta Uploads para que las img se almacenen).
 
 >Middleware multer:
 ```js
