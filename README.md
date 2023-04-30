@@ -61,6 +61,16 @@ Swagger es una herramienta de software que se utiliza para diseñar, construir, 
 
 ## EXTRAS ⌨️
 
+### Levantar el servidor 🖳
+
+Normalmente el servidor lo levantamos con el comando (con nodemon):
+
+● npm run dev
+
+Si tu ordenador crea conflicto de autorizaciones a la hora de ejecutar ciertos endpoints (ej. create con nodemailer), ejecuta el siguiente comando:
+
+● NODE_TLS_REJECT_UNAUTHORIZED='0' npm run dev
+
 ### BCRYPT (Encriptación de contraseñas) 🖳
 
 HASH --> Una función criptográfica hash- usualmente conocida como “hash”- es un algoritmo matemático que transforma cualquier
