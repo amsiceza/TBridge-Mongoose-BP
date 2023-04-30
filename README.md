@@ -48,24 +48,28 @@ Postman sirve para múltiples tareas dentro de las cuales destacaremos en esta o
 
 Lo descargamos del siguiente enlace [*POSTMAN*](https://www.postman.com/downloads/).
 
-## Ejecutando Sequelize ⌨️
-
-Sequelize es un ORM O(Object) R (Relational) M(Mapping) que permite a los usuarios llamar a funciones javascript para interactuar con SQL DB sin escribir consultas reales. Es bastante útil para acelerar el tiempo de desarrollo.
-
-Primero instalamos el CLI de Sequelize de forma global (solo se hace una vez en tu PC).
-
-● npm install sequelize-cli -g.
-
-Para las veces posteriores, instalaremos varias herramientas de forma simultánea.
-
-● npm install express sequelize mysql2.
-
 ## Ejecutando Mongoose ⌨️
-FALTA AÑADIR!!!!!!!!!!!!!!!!
+
+Mongoose es un O.D.M (Object Document Modeling) para MongoDB en NodeJs con el que podemos crear Schemas para tipado de datos, esquematizar, validar, entre otras cosas.
+
+● npm install express mongoose
+
 ## Ejecutando Swagger ⌨️
-FALTA AÑADIR!!!!!!!!!!!!!!!!
+Swagger es una herramienta de software que se utiliza para diseñar, construir, documentar y probar tu API.
+
+● npm i swagger-ui-express
 
 ## EXTRAS ⌨️
+
+### Levantar el servidor 🖳
+
+Normalmente el servidor lo levantamos con el comando (con nodemon):
+
+● npm run dev
+
+Si tu ordenador crea conflicto de autorizaciones a la hora de ejecutar ciertos endpoints (ej. create con nodemailer), ejecuta el siguiente comando:
+
+● NODE_TLS_REJECT_UNAUTHORIZED='0' npm run dev
 
 ### BCRYPT (Encriptación de contraseñas) 🖳
 
@@ -331,7 +335,47 @@ const typeError = (err, req, res, next) => {
 module.exports = { typeError };
 ```
 ### MULTER (Inserción de files (imágenes) en los endpoints) 🖳
-FALTA AÑADIR!!!!!!!!!!!!!!!!
+
+Multer es un middleware para Express y Node. js que hace que sea fácil manipular este multipart/form-data cuando tus usuarios suben archivos.
+
+● npm i multer
+
+- En la carpeta “middlewares” creamos un archivo llamado “multer.js” (Además crearemos carpeta Uploads para que las img se almacenen).
+
+>Middleware multer:
+```js
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+  });
+  
+const upload = multer({ storage: storage });
+
+module.exports = upload;
+```
+- En las rutas importamos el middleware multer.
+
+>Importamos multer a las rutas:
+```js
+const upload = require('../middlewares/multer'); 
+```
+
+- Añadimos multer a las rutas de endpoints (ejemplos para create y update).
+
+>Importamos multer a las rutas de los endpoints con:
+```js
+upload.single('img')
+```
+```js
+router.post('/create', authentication, upload.single('img'), PostController.create)
+router.put("/update/:_id", authentication, isAuthor, upload.single('img'), PostController.update);
+```
 
 ## Construido con 🛠️
 
