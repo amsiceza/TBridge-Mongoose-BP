@@ -42,7 +42,7 @@ module.exports = {
         parameters: [],
         requestBody: {
           content: {
-            "application/json": {
+            "multipart/form-data": {
               schema: {
                 $ref: "#/components/schemas/UserLogin",
               },
@@ -201,8 +201,8 @@ module.exports = {
         tags: {
           Users: "-Get User By Username",
         },
-        description: "Get User By Usernama",
-        operationId: "getById",
+        description: "Get User By Username",
+        operationId: "getByUsername",
         parameters: [
           {
             name: "username",
@@ -378,6 +378,7 @@ module.exports = {
         },
       },
     },
+
     "/users/unfollow/{_id}": {
       put: {
         security: [
@@ -444,7 +445,7 @@ module.exports = {
       },
     },
 
-    "/posts/update/644d9468a8c90df3e92c414b": {
+    "/posts/update/{_id}": {
       put: {
         security: [
           {
@@ -487,7 +488,8 @@ module.exports = {
         },
       },
     },
-    "/posts/delete/644d9465a8c90df3e92c4148": {
+
+    "/posts/delete/{_id}": {
       delete: {
         security: [
           {
@@ -521,7 +523,8 @@ module.exports = {
         },
       },
     },
-    "/posts/getByTitle/Adios": {
+
+    "/posts/getByTitle/{title}": {
       get: {
         security: [
           {
@@ -533,7 +536,15 @@ module.exports = {
         },
         description: "Get Post by title",
         operationId: "getByTitle",
-        parameters: [],
+        parameters: [
+          {
+            name: "title",
+            in: "path",
+            schema: {
+              $ref: "#/components/schemas/title",
+            },
+          },
+        ],
         responses: {
           404: {
             description: "Post not found",
@@ -544,7 +555,8 @@ module.exports = {
         },
       },
     },
-    "/posts/getById/644d9468a8c90df3e92c414b": {
+
+    "/posts/getById/{_id}": {
       get: {
         security: [
           {
@@ -575,7 +587,8 @@ module.exports = {
         },
       },
     },
-    "/posts/getInfo/": {
+
+    "/posts/getInfo": {
       get: {
         security: [
           {
@@ -595,7 +608,8 @@ module.exports = {
         },
       },
     },
-    "/posts/likes/644d9468a8c90df3e92c414b": {
+
+    "/posts/likes/{_id}": {
       put: {
         security: [
           {
@@ -626,7 +640,8 @@ module.exports = {
         },
       },
     },
-    "/posts/unlike/644d9468a8c90df3e92c414b": {
+
+    "/posts/unlike/{_id}": {
       put: {
         security: [
           {
@@ -658,7 +673,7 @@ module.exports = {
       },
     },
     //ENDPOINTS SPACE FOR COMMENTS
-    "/comments/create/644d9468a8c90df3e92c414b": {
+    "/comments/create/{_id}": {
       post: {
         security: [
           {
@@ -698,7 +713,7 @@ module.exports = {
         },
       },
     },
-    "/comments/update/644dbd82d72cc31d9b5d77c2": {
+    "/comments/update/{_id}": {
       put: {
         security: [
           {
@@ -741,7 +756,7 @@ module.exports = {
         },
       },
     },
-    "/comments/delete/644dbd82d72cc31d9b5d77c2": {
+    "/comments/delete/{_id}": {
       delete: {
         security: [
           {
@@ -798,7 +813,7 @@ module.exports = {
         },
       },
     },
-    "/comments/likes/644dc4082cb29da314bcbb40": {
+    "/comments/likes/{_id}": {
       put: {
         security: [
           {
@@ -829,7 +844,7 @@ module.exports = {
         },
       },
     },
-    "/comments/unlike/644dc4082cb29da314bcbb40": {
+    "/comments/unlike/{_id}": {
       put: {
         security: [
           {

@@ -61,11 +61,11 @@ module.exports = {
             items: {
               type: "string",
               format: "objectId",
-              description: "IDs of the posts that the user has liked",
+              description: "IDs of the likes that the user has on their posts",
               example: "644b9b731fc464716e8401cb",
             },
             description:
-              "Array containing the IDs of the posts that the user has liked",
+              "Array containing the IDs of the likes that the user has on their posts",
           },
           wishList: {
             type: "array",
@@ -83,11 +83,11 @@ module.exports = {
             items: {
               type: "string",
               format: "objectId",
-              description: "IDs of the comments that the user has liked",
+              description: "IDs of the likes that the user has on their comments",
               example: "644b9b731fc464716e8401cb",
             },
             description:
-              "Array containing the IDs of the comments that the user has liked",
+              "Array containing the IDs of the likes that the user has on their comments",
           },
           wishListCom: {
             type: "array",
@@ -228,8 +228,6 @@ module.exports = {
         },
       },
 
-
-
       _id: {
         name: "_id",
         in: "path",
@@ -262,23 +260,32 @@ module.exports = {
         },
       },
 
-      
-
+      title: {
+        name: "title",
+        in: "path",
+        description: "title",
+        required: true,
+        schema: {
+          type: "string",
+        },
+      },
+   
       UserLogin: {
         type: "object",
         properties: {
           email: {
             type: "string",
             description: "user's email",
-            example: "guillermosoler.gsf@gmail.com",
+            example: "yourmail@gmail.com",
           },
           password: {
             type: "string",
             description: "security password",
-            example: "1234asdf",
+            example: "123456",
           },
         },
       },
+
       PostInput: {
         type: "object",
         properties: {
@@ -300,6 +307,7 @@ module.exports = {
           },
         },
       },
+
       CommentInput: {
         type: "object",
         properties: {
@@ -316,6 +324,7 @@ module.exports = {
           },
         },
       },
+
       UserInput: {
         type: "object",
         properties: {
