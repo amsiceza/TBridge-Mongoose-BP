@@ -1,5 +1,4 @@
 /node_modules
 /config/keys.js
-/config/nodemailer.js
 /.env
 /uploads
