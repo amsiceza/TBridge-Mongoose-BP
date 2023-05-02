@@ -458,19 +458,8 @@ upload.single("img");
 ```
 
 ```js
-router.post(
-  "/create",
-  authentication,
-  upload.single("img"),
-  PostController.create
-);
-router.put(
-  "/update/:_id",
-  authentication,
-  isAuthor,
-  upload.single("img"),
-  PostController.update
-);
+router.post("/create", authentication, upload.single("img"), PostController.create);
+router.put("/update/:_id", authentication, isAuthor, upload.single("img"), PostController.update);
 ```
 ---
 
