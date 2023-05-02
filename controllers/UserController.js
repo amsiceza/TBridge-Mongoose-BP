@@ -103,15 +103,17 @@ const UserController = {
         email: req.body.email,
       });
 
+      if (!user) {
+        return res.status(400).send({ message: "Invalid email or password" });
+      }
+      
       if (!user.confirmed) {
         return res
           .status(401)
           .send({ message: "It is necessary to confirm your email" });
       }
 
-      if (!user) {
-        return res.status(400).send({ message: "Invalid email or password" });
-      }
+      
       const passwordMatch = await bcrypt.compare(
         req.body.password,
         user.password

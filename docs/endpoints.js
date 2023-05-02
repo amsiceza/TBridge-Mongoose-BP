@@ -42,7 +42,7 @@ module.exports = {
         parameters: [],
         requestBody: {
           content: {
-            "multipart/form-data": {
+            "application/json": {
               schema: {
                 $ref: "#/components/schemas/UserLogin",
               },
