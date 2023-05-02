@@ -10,7 +10,7 @@ router.put("/update/:_id", authentication, isAuthor, upload.single('img'), PostC
 router.delete("/delete/:_id", authentication, isAuthor, PostController.delete);
 router.get("/getByTitle/:title", authentication, PostController.getByTitle);
 router.get("/getById/:_id", authentication, PostController.getById);
-router.get("/getInfo", authentication, PostController.getInfo);
+router.get("/getInfo", PostController.getInfo);
 router.put('/likes/:_id', authentication, PostController.like);
 router.put('/unlike/:_id', authentication, PostController.unlike);
 
